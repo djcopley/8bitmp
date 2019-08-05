@@ -2,8 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library cpu_lib;
-use cpu_lib.helpers.all;
+library cpulib;
+use cpulib.helpers.all;
+use cpulib.types.all;
+use cpulib.constants.all;
 
 entity cpu is
   port(
