@@ -7,13 +7,15 @@ entity alu is
     -- clock and reset lines
     clk : in std_logic;
     rst : in std_logic;
-    -- control signal
-    ctrl : in std_logic_vector(2 downto 0);
+    -- control signals
+    en : in std_logic;
+    ctrl : in std_logic_vector(3 downto 0);
     -- A and B registers
     A : in std_logic_vector(7 downto 0);
     B : in std_logic_vector(7 downto 0);
     -- output
-    Y : in std_logic_vector(7 downto 0)
+    ready : out std_logic;
+    C : out std_logic_vector(7 downto 0)
   );
 end entity alu;
 
@@ -28,31 +30,41 @@ begin
 
       if rst='1' then
 
-        Y <= (others => '0');
+        C <= (others => '0');
+        ready <= '0';
 
       else
 
-        case ctrl is
-          when "000" =>
-            Y <= A;
-          when "001" =>
-            Y <= B;
-          when "010" =>
-            Y <= std_logic_vector(signed(A) + to_signed(1, A'length));
-          when "011" =>
-            Y <= std_logic_vector(signed(B) + to_signed(1, B'length));
-          when "100" =>
-            Y <= std_logic_vector(signed(A) + signed(B));
-          when "101" =>
-            Y <= std_logic_vector(signed(A) - signed(B));
-          when "110" =>
-            Y <= A and B;
-          when "111" =>
-            Y <= A or B;
-        end case;
+        if en='1' then
+          
+          case ctrl is
+            when "000" =>
+              C <= A;
+            when "001" =>
+              C <= B;
+            when "010" =>
+              C <= std_logic_vector(signed(A) + to_signed(1, A'length));
+            when "011" =>
+              C <= std_logic_vector(signed(B) + to_signed(1, B'length));
+            when "100" =>
+              C <= std_logic_vector(signed(A) + signed(B));
+            when "101" =>
+              C <= std_logic_vector(signed(A) - signed(B));
+            when "110" =>
+              C <= A and B;
+            when "111" =>
+              C <= A or B;
+          end case;
+          
+          ready <= '1';
+        
+        else
+          
+          ready <= '0';
+        
+        end if;
 
       end if;
-    
     end if;
   end process;
 end architecture rtl;

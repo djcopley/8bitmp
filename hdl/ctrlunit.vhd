@@ -70,10 +70,14 @@ begin
 
       if rst = '1' then
 
-        A <= (others => '0');
-        B <= (others => '0');
+        A_REG <= (others => '0');
+        B_REG <= (others => '0');
+        B_SELECTED <= (others => '0');
         PC <= (others => '0');
         MBR <= (others => '0');
+
+        MPC <= (others => '0');
+        MIR <= (others => '0');
 
         out_reg <= (others => '0');
 
@@ -104,4 +108,3 @@ begin
     end if;
   end process;
 end architecture rtl;
-

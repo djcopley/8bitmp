@@ -7,23 +7,23 @@ use cpulib.helpers.all;
 
 entity progmem is
   generic(
-    ADDR_BITS : positive := 5
+    ADDR_BITS : positive
   );
   port(
     clk : in std_logic;
     rst : in std_logic;
-    rw : in std_logic; -- '0'=read '1'=write
-    addr : in std_logic_vector(4 downto 0);
+    addr : in std_logic_vector(ADDR_BITS-1 downto 0);
     wr_en : in std_logic; -- write enable
     din : in std_logic_vector(15 downto 0);
     rd_en : in std_logic; -- read enable
+    data_out_vld : out std_logic;
     dout : out std_logic_vector(15 downto 0)
   );
 end entity progmem;
 
 architecture rtl of progmem is
 
-  type ram_t is array(0 to 2**ADDR_BITS) of std_logic_vector(15 downto 0); -- Word-addressable
+  type ram_t is array(0 to 2**ADDR_BITS) of std_logic_vector(15 downto 0); -- word-addressable
   signal ram : ram_t;
 
 begin
@@ -36,12 +36,18 @@ begin
       if rst='1' then
 
         dout <= (others => '0');
+        data_out_vld <= '0';
 
       else
 
-        if rw='0' and rd_en='1' then
+        if rd_en='1' then
 
           dout <= ram(slv2index(addr));
+          data_out_vld <= '1';
+
+        else
+
+          data_out_vld <= '0';
 
         end if;
 
@@ -60,7 +66,7 @@ begin
 
       else
 
-        if rw='1' and wr_en='1' then
+        if wr_en='1' then
           
           ram(slv2index(addr)) <= din;
 
