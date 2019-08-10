@@ -85,10 +85,10 @@ begin
               _addr_sel <= _addr_or_load;
           end case;
 
-				else
-
-					_rd_en <= '0';
-
+        else
+          
+          _rd_en <= '0';
+        
         end if;
 
       end if;
