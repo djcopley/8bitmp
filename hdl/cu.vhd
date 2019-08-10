@@ -7,7 +7,7 @@ use cpulib.helpers.all;
 use cpulib.types.all;
 use cpulib.constants.all;
 
-entity ctrlunit is
+entity cu is
   port(
     clk : in std_logic;
     rst : in std_logic;
@@ -22,9 +22,9 @@ entity ctrlunit is
     reg_sel : out std_logic_vector(2 downto 0);
     b_sel : out std_logic_vector(1 downto 0)
   );
-end entity ctrlunit;
+end entity cu;
 
-architecture rtl of ctrlunit is
+architecture rtl of cu is
 
   signal _addr_sel : std_logic_vector(6 downto 0); -- selected address
   signal _rd_en : std_logic;
