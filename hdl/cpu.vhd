@@ -71,10 +71,11 @@ begin
 
     if rising_edge(clk) then
       if rst='1' then
-
         -- synchronous reset
+        A <= (others => '0');
+        B <= (others => '0');
+        PC <= (others => '0');
         FE_STATE <= FETCH;
-        cu_fetch <= '0';
 
       else
 
@@ -98,12 +99,19 @@ begin
                 when others =>
                   B_SELECTED <= EXTIN;
               end case;
-              alu_en <= '1';
-              FE_STATE <= EXECUTE;
+              
+              if jmpc='1' then
+                FE_STATE <= INCR;
+              else
+                alu_en <= '1';
+                FE_STATE <= EXECUTE;
+              end if;
             end if;
 
           when EXECUTE =>
             -- execute instruction
+            alu_en <= '0';
+            
             if alu_opcompl='1' then
               case reg_write_sel is
                 when "00" =>
@@ -112,14 +120,14 @@ begin
                   B <= C_BUS;
                 when "10" =>
                   PC <= C_BUS;
-                when "11" =>
+                when others =>
                   EXTOUT <= C_BUS;
               end case;
               FE_STATE <= INCR;
             end if;
 
           when INCR =>
-            --
+            -- increment the program counter
             if jmpc='1' then
               PC <= LOAD;
             else

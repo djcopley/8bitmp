@@ -45,15 +45,15 @@ begin
             when "010" =>
               C <= std_logic_vector(signed(A) + to_signed(1, A'length));
             when "011" =>
-              C <= std_logic_vector(signed(B) + to_signed(1, B'length));
-            when "100" =>
               C <= std_logic_vector(signed(A) + signed(B));
-            when "101" =>
+            when "100" =>
               C <= std_logic_vector(signed(A) - signed(B));
-            when "110" =>
+            when "101" =>
               C <= A and B;
-            when "111" =>
+            when "110" =>
               C <= A or B;
+            when others =>
+              C <= A xor B;
           end case;
           
           opcompl <= '1';
