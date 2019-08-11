@@ -48,7 +48,7 @@ begin
   reg_sel <= i_reg_sel;
   b_sel <= i_b_sel;
 
-  inst_progmem : entity work.progmem(sim)
+  inst_progmem : entity work.progmem
   generic map(
     ADDR_BITS => 8
   )

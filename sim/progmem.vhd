@@ -81,36 +81,6 @@ begin
       end if;
     end if;
   end process;
-  
---  write : process
---    variable instructions : ram_t;
---  begin
---    instructions(0) := (others => '1');
---    ram <= instructions;
---    wait;
-        
---  end process;
-
---  write : process(clk)
---  begin
-    
---    if rising_edge(clk) then
-      
---      if rst='1' then
-      
---        ram <= (others => (others => '0'));
-        
---      else
-
---        if wr_en='1' then
-          
---          ram(slv2index(addr)) <= din;
-    
---        end if;
-        
---      end if;
---    end if;
---  end process;
 
 end architecture sim;
 

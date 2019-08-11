@@ -72,8 +72,6 @@ begin
     if rising_edge(clk) then
       if rst='1' then
         -- synchronous reset
-        A <= (others => '0');
-        B <= (others => '0');
         PC <= (others => '0');
         FE_STATE <= FETCH;
 
