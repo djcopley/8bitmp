@@ -7,10 +7,10 @@ use cpulib.helpers.all;
 
 entity cpu is
   port(
-    clk : std_logic;
-    rst : std_logic;
-    EXTIN : std_logic_vector(7 downto 0);
-    EXTOUT : std_logic_vector(7 downto 0)
+    clk : in std_logic;
+    rst : in std_logic;
+    EXTIN : in std_logic_vector(7 downto 0);
+    EXTOUT : out std_logic_vector(7 downto 0)
   );
 end entity cpu;
 
@@ -29,10 +29,10 @@ architecture rtl of cpu is
 
   signal alu_en : std_logic; -- alu enable
   signal alu_ctrl : std_logic_vector(2 downto 0); -- alu control bits
-  signal alu_ready : std_logic; -- alu completed operation
+  signal alu_opcompl : std_logic; -- alu completed operation
 
-  signal cu_en : std_logic; -- tell the control unit to fetch and decode next instruction
-  signal cu_ready : std_logic; -- control unit ready
+  signal cu_fetch : std_logic; -- tell the control unit to fetch and decode next instruction
+  signal cu_opcompl : std_logic; -- control unit ready
 
   signal jmpc : std_logic; -- jump control 
   signal reg_write_sel : std_logic_vector(1 downto 0);
@@ -44,9 +44,9 @@ begin
   port map(
     clk => clk,
     rst => rst,
-    fetch => cu_en,
+    fetch => cu_fetch,
     PC => PC,
-    ready => cu_ready,
+    opcompl => cu_opcompl,
     jmpc => jmpc,
     addr_or_load => LOAD,
     alu_code => alu_ctrl,
@@ -63,7 +63,7 @@ begin
     A => A,
     B => B_SELECTED,
     C => C_BUS,
-    alu_ready => alu_ready
+    opcompl => alu_opcompl
   );
 
   process(clk)
@@ -74,23 +74,20 @@ begin
 
         -- synchronous reset
         FE_STATE <= FETCH;
-        cu_en <= '0';
+        cu_fetch <= '0';
 
       else
 
         case FE_STATE is
           when FETCH =>
-            --
-            if cu_en='0' then
-              cu_en <= '1';
-            else
-              cu_en <= '0';
-              FE_STATE <= DECODE;
-            end if;
+            -- fetch next instruction
+            cu_fetch <= '1';
+            FE_STATE <= DECODE;
 
           when DECODE =>
             -- wait for control unit to finish decoding instruction
-            if cu_ready='1' then
+            cu_fetch <= '0';
+            if cu_opcompl='1' then
               case b_sel is
                 when "00" =>
                   B_SELECTED <= B;
@@ -107,7 +104,7 @@ begin
 
           when EXECUTE =>
             -- execute instruction
-            if alu_ready then
+            if alu_opcompl='1' then
               case reg_write_sel is
                 when "00" =>
                   A <= C_BUS;
@@ -126,7 +123,7 @@ begin
             if jmpc='1' then
               PC <= LOAD;
             else
-              PC <= PC + 1;
+              PC <= std_logic_vector(unsigned(PC) + to_unsigned(1, PC'length));
             end if;
             FE_STATE <= FETCH;
         end case;

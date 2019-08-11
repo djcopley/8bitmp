@@ -16,14 +16,14 @@ entity progmem is
     wr_en : in std_logic; -- write enable
     din : in std_logic_vector(15 downto 0);
     rd_en : in std_logic; -- read enable
-    data_out_vld : out std_logic;
+    opcompl : out std_logic;
     dout : out std_logic_vector(15 downto 0)
   );
 end entity progmem;
 
 architecture rtl of progmem is
 
-  type ram_t is array(0 to 2**ADDR_BITS) of std_logic_vector(15 downto 0); -- word-addressable
+  type ram_t is array(0 to 2**ADDR_BITS - 1) of std_logic_vector(15 downto 0); -- word-addressable
   signal ram : ram_t;
 
 begin
@@ -36,18 +36,18 @@ begin
       if rst='1' then
 
         dout <= (others => '0');
-        data_out_vld <= '0';
+        opcompl <= '0';
 
       else
 
         if rd_en='1' then
 
           dout <= ram(slv2index(addr));
-          data_out_vld <= '1';
+          opcompl <= '1';
 
         else
 
-          data_out_vld <= '0';
+          opcompl <= '0';
 
         end if;
 

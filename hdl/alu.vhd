@@ -9,12 +9,12 @@ entity alu is
     rst : in std_logic;
     -- control signals
     en : in std_logic;
-    ctrl : in std_logic_vector(3 downto 0);
+    ctrl : in std_logic_vector(2 downto 0);
     -- A and B registers
     A : in std_logic_vector(7 downto 0);
     B : in std_logic_vector(7 downto 0);
     -- output
-    ready : out std_logic;
+    opcompl : out std_logic; -- operation complete
     C : out std_logic_vector(7 downto 0)
   );
 end entity alu;
@@ -31,7 +31,7 @@ begin
       if rst='1' then
 
         C <= (others => '0');
-        ready <= '0';
+        opcompl <= '0';
 
       else
 
@@ -56,11 +56,11 @@ begin
               C <= A or B;
           end case;
           
-          ready <= '1';
+          opcompl <= '1';
         
         else
           
-          ready <= '0';
+          opcompl <= '0';
         
         end if;
 
